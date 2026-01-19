@@ -46,7 +46,6 @@ export class ProjectsService {
   async findOne(id: string, userId: string): Promise<Project> {
     const project = await this.projectRepository.findOne({
       where: { id },
-      relations: ['workspace'],
     });
 
     if (!project) {
