@@ -25,7 +25,7 @@ export class WorkspacesService {
       throw new NotFoundException('User not found');
     }
 
-    const inviteCode = this.generateInviteCode();
+    const inviteCode = await this.ensureUniqueInviteCode();
 
     const workspace = this.workspaceRepository.create({
       ...createDto,
@@ -121,6 +121,16 @@ export class WorkspacesService {
     return this.workspaceMemberRepository.save(member);
   }
 
+  async addMemberWithPermissionCheck(
+    workspaceId: string,
+    requestingUserId: string,
+    targetUserId: string,
+    role: WorkspaceRole,
+  ): Promise<WorkspaceMember> {
+    await this.checkUserPermission(workspaceId, requestingUserId, [WorkspaceRole.OWNER, WorkspaceRole.ADMIN]);
+    return this.addMember(workspaceId, targetUserId, role);
+  }
+
   async getMembers(workspaceId: string): Promise<WorkspaceMember[]> {
     const workspace = await this.workspaceRepository.findOne({ where: { id: workspaceId } });
     if (!workspace) {
@@ -135,6 +145,28 @@ export class WorkspacesService {
 
   generateInviteCode(): string {
     return randomBytes(4).toString('hex');
+  }
+
+  private async ensureUniqueInviteCode(): Promise<string> {
+    let inviteCode: string;
+    let isUnique = false;
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    while (!isUnique && attempts < maxAttempts) {
+      inviteCode = this.generateInviteCode();
+      const existing = await this.workspaceRepository.findOne({
+        where: { invite_code: inviteCode },
+      });
+      isUnique = !existing;
+      attempts++;
+    }
+
+    if (!isUnique) {
+      inviteCode = randomBytes(8).toString('hex');
+    }
+
+    return inviteCode;
   }
 
   async joinByInviteCode(code: string, userId: string): Promise<Workspace> {
@@ -167,7 +199,7 @@ export class WorkspacesService {
 
     await this.checkUserPermission(workspaceId, userId, [WorkspaceRole.OWNER, WorkspaceRole.ADMIN]);
 
-    const newCode = this.generateInviteCode();
+    const newCode = await this.ensureUniqueInviteCode();
     workspace.invite_code = newCode;
     await this.workspaceRepository.save(workspace);
 

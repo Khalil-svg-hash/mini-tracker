@@ -63,8 +63,12 @@ export class WorkspacesController {
     @Request() req,
     @Body() addMemberDto: AddMemberDto,
   ) {
-    await this.workspacesService.findOne(id, req.user.id);
-    return this.workspacesService.addMember(id, addMemberDto.user_id, addMemberDto.role);
+    return this.workspacesService.addMemberWithPermissionCheck(
+      id,
+      req.user.id,
+      addMemberDto.user_id,
+      addMemberDto.role,
+    );
   }
 
   @Post(':id/invite')
