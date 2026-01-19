@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Task } from '../../entities/task.entity';
 import { Project } from '../../entities/project.entity';
+import { Board } from '../../entities/board.entity';
 import { BoardColumn } from '../../entities/board-column.entity';
 import { User } from '../../entities/user.entity';
 import { WorkspaceMember } from '../../entities/workspace-member.entity';
@@ -38,9 +39,15 @@ export class TasksService {
     await this.checkProjectAccess(project.workspace_id, userId);
 
     if (createDto.column_id) {
-      const column = await this.boardColumnRepository.findOne({ where: { id: createDto.column_id } });
+      const column = await this.boardColumnRepository.findOne({
+        where: { id: createDto.column_id },
+        relations: ['board', 'board.project'],
+      });
       if (!column) {
         throw new NotFoundException('Board column not found');
+      }
+      if (column.board.project.id !== projectId) {
+        throw new ForbiddenException('Column does not belong to this project');
       }
     }
 
@@ -48,6 +55,12 @@ export class TasksService {
       const assignee = await this.userRepository.findOne({ where: { id: createDto.assignee_id } });
       if (!assignee) {
         throw new NotFoundException('Assignee not found');
+      }
+      const isMember = await this.workspaceMemberRepository.findOne({
+        where: { workspace_id: project.workspace_id, user_id: createDto.assignee_id },
+      });
+      if (!isMember) {
+        throw new ForbiddenException('Assignee is not a member of this workspace');
       }
     }
 
@@ -67,20 +80,22 @@ export class TasksService {
   }
 
   async findAll(filters: TaskFilterDto, userId: string): Promise<Task[]> {
+    if (!filters.project_id) {
+      throw new ForbiddenException('project_id filter is required');
+    }
+
+    const project = await this.projectRepository.findOne({ where: { id: filters.project_id } });
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+    await this.checkProjectAccess(project.workspace_id, userId);
+
     const queryBuilder = this.taskRepository.createQueryBuilder('task')
       .leftJoinAndSelect('task.assignee', 'assignee')
       .leftJoinAndSelect('task.reporter', 'reporter')
       .leftJoinAndSelect('task.column', 'column')
-      .leftJoinAndSelect('task.project', 'project');
-
-    if (filters.project_id) {
-      const project = await this.projectRepository.findOne({ where: { id: filters.project_id } });
-      if (!project) {
-        throw new NotFoundException('Project not found');
-      }
-      await this.checkProjectAccess(project.workspace_id, userId);
-      queryBuilder.andWhere('task.project_id = :projectId', { projectId: filters.project_id });
-    }
+      .leftJoinAndSelect('task.project', 'project')
+      .where('task.project_id = :projectId', { projectId: filters.project_id });
 
     if (filters.assignee_id) {
       queryBuilder.andWhere('task.assignee_id = :assigneeId', { assigneeId: filters.assignee_id });
@@ -129,9 +144,15 @@ export class TasksService {
     await this.checkTaskAccess(id, userId);
 
     if (updateDto.column_id) {
-      const column = await this.boardColumnRepository.findOne({ where: { id: updateDto.column_id } });
+      const column = await this.boardColumnRepository.findOne({
+        where: { id: updateDto.column_id },
+        relations: ['board', 'board.project'],
+      });
       if (!column) {
         throw new NotFoundException('Board column not found');
+      }
+      if (column.board.project.id !== task.project_id) {
+        throw new ForbiddenException('Column does not belong to this project');
       }
     }
 
@@ -139,6 +160,12 @@ export class TasksService {
       const assignee = await this.userRepository.findOne({ where: { id: updateDto.assignee_id } });
       if (!assignee) {
         throw new NotFoundException('Assignee not found');
+      }
+      const isMember = await this.workspaceMemberRepository.findOne({
+        where: { workspace_id: task.project.workspace_id, user_id: updateDto.assignee_id },
+      });
+      if (!isMember) {
+        throw new ForbiddenException('Assignee is not a member of this workspace');
       }
     }
 
@@ -179,9 +206,15 @@ export class TasksService {
 
     await this.checkTaskAccess(taskId, userId);
 
-    const column = await this.boardColumnRepository.findOne({ where: { id: moveDto.column_id } });
+    const column = await this.boardColumnRepository.findOne({
+      where: { id: moveDto.column_id },
+      relations: ['board', 'board.project'],
+    });
     if (!column) {
       throw new NotFoundException('Board column not found');
+    }
+    if (column.board.project.id !== task.project_id) {
+      throw new ForbiddenException('Column does not belong to this project');
     }
 
     const oldColumnId = task.column_id;
