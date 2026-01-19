@@ -13,6 +13,17 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { TaskFilterDto } from './dto/task-filter.dto';
 import { MoveTaskDto } from './dto/move-task.dto';
 
+enum ActivityAction {
+  TASK_CREATED = 'task_created',
+  TASK_UPDATED = 'task_updated',
+  TASK_DELETED = 'task_deleted',
+  TASK_MOVED = 'task_moved',
+}
+
+interface ActivityDetails {
+  [key: string]: any;
+}
+
 @Injectable()
 export class TasksService {
   constructor(
@@ -72,7 +83,7 @@ export class TasksService {
 
     const savedTask = await this.taskRepository.save(task);
 
-    await this.logActivity(savedTask.id, userId, 'task_created', {
+    await this.logActivity(savedTask.id, userId, ActivityAction.TASK_CREATED, {
       title: savedTask.title,
     });
 
@@ -80,10 +91,6 @@ export class TasksService {
   }
 
   async findAll(filters: TaskFilterDto, userId: string): Promise<Task[]> {
-    if (!filters.project_id) {
-      throw new ForbiddenException('project_id filter is required');
-    }
-
     const project = await this.projectRepository.findOne({ where: { id: filters.project_id } });
     if (!project) {
       throw new NotFoundException('Project not found');
@@ -175,7 +182,7 @@ export class TasksService {
 
     const changes = this.getChanges(oldValues, updateDto);
     if (Object.keys(changes).length > 0) {
-      await this.logActivity(task.id, userId, 'task_updated', changes);
+      await this.logActivity(task.id, userId, ActivityAction.TASK_UPDATED, changes);
     }
 
     return updatedTask;
@@ -190,7 +197,7 @@ export class TasksService {
 
     await this.checkTaskAccess(id, userId);
 
-    await this.logActivity(task.id, userId, 'task_deleted', {
+    await this.logActivity(task.id, userId, ActivityAction.TASK_DELETED, {
       title: task.title,
     });
 
@@ -225,7 +232,7 @@ export class TasksService {
 
     const updatedTask = await this.taskRepository.save(task);
 
-    await this.logActivity(task.id, userId, 'task_moved', {
+    await this.logActivity(task.id, userId, ActivityAction.TASK_MOVED, {
       from_column_id: oldColumnId,
       to_column_id: moveDto.column_id,
       from_position: oldPosition,
@@ -258,7 +265,7 @@ export class TasksService {
     }
   }
 
-  private async logActivity(taskId: string, userId: string, action: string, details: any): Promise<void> {
+  private async logActivity(taskId: string, userId: string, action: ActivityAction, details: ActivityDetails): Promise<void> {
     const log = this.activityLogRepository.create({
       task_id: taskId,
       user_id: userId,
@@ -269,8 +276,8 @@ export class TasksService {
     await this.activityLogRepository.save(log);
   }
 
-  private getChanges(oldValues: any, newValues: any): any {
-    const changes: any = {};
+  private getChanges(oldValues: Task, newValues: UpdateTaskDto): ActivityDetails {
+    const changes: ActivityDetails = {};
     const fieldsToTrack = ['title', 'description', 'status', 'priority', 'type', 'assignee_id', 'column_id', 'due_date', 'tags'];
 
     fieldsToTrack.forEach(field => {
