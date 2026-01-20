@@ -183,7 +183,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
           <Input
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
             placeholder="Add a tag"
             disabled={isSubmitting}
           />
