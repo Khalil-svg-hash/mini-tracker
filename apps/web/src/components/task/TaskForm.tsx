@@ -116,7 +116,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
           <label className="text-sm font-medium text-tg-text">Priority</label>
           <select
             value={formData.priority}
-            onChange={(e) => setFormData({ ...formData, priority: e.target.value as any })}
+            onChange={(e) => setFormData({ ...formData, priority: e.target.value as Task['priority'] })}
             className="px-4 py-2 bg-tg-bg border-2 border-tg-secondary-bg rounded-lg text-tg-text focus:outline-none focus:border-tg-button transition-colors"
             disabled={isSubmitting}
           >
@@ -131,7 +131,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
           <label className="text-sm font-medium text-tg-text">Status</label>
           <select
             value={formData.status}
-            onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+            onChange={(e) => setFormData({ ...formData, status: e.target.value as Task['status'] })}
             className="px-4 py-2 bg-tg-bg border-2 border-tg-secondary-bg rounded-lg text-tg-text focus:outline-none focus:border-tg-button transition-colors"
             disabled={isSubmitting}
           >

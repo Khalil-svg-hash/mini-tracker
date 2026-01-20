@@ -1,25 +1,12 @@
 import React from 'react';
 import { Badge } from '../common/Badge';
+import { PRIORITY_VARIANT, PRIORITY_LABEL } from '../../constants';
 
 interface PriorityBadgeProps {
   priority: 'low' | 'medium' | 'high' | 'urgent';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
-
-const PRIORITY_VARIANT = {
-  low: 'info' as const,
-  medium: 'default' as const,
-  high: 'warning' as const,
-  urgent: 'danger' as const,
-};
-
-const PRIORITY_LABEL = {
-  low: 'Low',
-  medium: 'Medium',
-  high: 'High',
-  urgent: 'Urgent',
-};
 
 export const PriorityBadge: React.FC<PriorityBadgeProps> = ({
   priority,

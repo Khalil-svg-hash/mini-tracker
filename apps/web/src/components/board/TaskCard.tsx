@@ -2,6 +2,7 @@ import React from 'react';
 import { Card } from '../common/Card';
 import { Badge } from '../common/Badge';
 import { Task } from '../../types';
+import { PRIORITY_VARIANT } from '../../constants';
 
 interface TaskCardProps {
   task: Task;
@@ -9,13 +10,6 @@ interface TaskCardProps {
   onDragStart?: (e: React.DragEvent) => void;
   onDragEnd?: (e: React.DragEvent) => void;
 }
-
-const PRIORITY_VARIANT = {
-  low: 'info' as const,
-  medium: 'default' as const,
-  high: 'warning' as const,
-  urgent: 'danger' as const,
-};
 
 export const TaskCard: React.FC<TaskCardProps> = ({
   task,
