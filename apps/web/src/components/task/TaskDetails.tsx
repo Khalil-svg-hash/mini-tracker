@@ -5,6 +5,7 @@ import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
 import { PriorityBadge } from './PriorityBadge';
 import { CommentSection } from './CommentSection';
+import { STATUS_LABEL } from '../../constants';
 
 interface TaskDetailsProps {
   task: Task;
@@ -73,7 +74,7 @@ export const TaskDetails: React.FC<TaskDetailsProps> = ({
           <div className="flex items-center gap-2 flex-wrap">
             <PriorityBadge priority={task.priority} />
             <Badge variant="default">
-              {task.status.replace('_', ' ').toUpperCase()}
+              {STATUS_LABEL[task.status]}
             </Badge>
             {task.column && (
               <Badge variant="primary" size="sm">

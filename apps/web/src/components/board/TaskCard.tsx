@@ -2,7 +2,7 @@ import React from 'react';
 import { Card } from '../common/Card';
 import { Badge } from '../common/Badge';
 import { Task } from '../../types';
-import { PRIORITY_VARIANT } from '../../constants';
+import { PRIORITY_VARIANT, PRIORITY_LABEL } from '../../constants';
 
 interface TaskCardProps {
   task: Task;
@@ -40,7 +40,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
 
         <div className="flex items-center justify-between gap-2 flex-wrap">
           <Badge variant={PRIORITY_VARIANT[task.priority]} size="sm">
-            {task.priority}
+            {PRIORITY_LABEL[task.priority]}
           </Badge>
           
           {task.dueDate && (

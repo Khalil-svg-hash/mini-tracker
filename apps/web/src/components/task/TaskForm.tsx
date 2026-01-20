@@ -3,6 +3,7 @@ import { Task } from '../../types';
 import { Input } from '../common/Input';
 import { TextArea } from '../common/TextArea';
 import { Button } from '../common/Button';
+import { PRIORITY_LABEL, STATUS_LABEL } from '../../constants';
 
 interface TaskFormProps {
   task?: Task;
@@ -120,10 +121,10 @@ export const TaskForm: React.FC<TaskFormProps> = ({
             className="px-4 py-2 bg-tg-bg border-2 border-tg-secondary-bg rounded-lg text-tg-text focus:outline-none focus:border-tg-button transition-colors"
             disabled={isSubmitting}
           >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-            <option value="urgent">Urgent</option>
+            <option value="low">{PRIORITY_LABEL.low}</option>
+            <option value="medium">{PRIORITY_LABEL.medium}</option>
+            <option value="high">{PRIORITY_LABEL.high}</option>
+            <option value="urgent">{PRIORITY_LABEL.urgent}</option>
           </select>
         </div>
 
@@ -135,10 +136,10 @@ export const TaskForm: React.FC<TaskFormProps> = ({
             className="px-4 py-2 bg-tg-bg border-2 border-tg-secondary-bg rounded-lg text-tg-text focus:outline-none focus:border-tg-button transition-colors"
             disabled={isSubmitting}
           >
-            <option value="todo">To Do</option>
-            <option value="in_progress">In Progress</option>
-            <option value="done">Done</option>
-            <option value="archived">Archived</option>
+            <option value="todo">{STATUS_LABEL.todo}</option>
+            <option value="in_progress">{STATUS_LABEL.in_progress}</option>
+            <option value="done">{STATUS_LABEL.done}</option>
+            <option value="archived">{STATUS_LABEL.archived}</option>
           </select>
         </div>
       </div>
