@@ -18,6 +18,9 @@ let tasks = [];
 let nextId = 1;
 
 // Initialize Telegram Bot (only if token is provided)
+// Note: In production, you should configure webhooks instead of polling
+// for better performance and reliability. See Telegram Bot API docs:
+// https://core.telegram.org/bots/api#setwebhook
 let bot = null;
 if (process.env.TELEGRAM_BOT_TOKEN) {
   try {

@@ -1,5 +1,6 @@
 // API Configuration
-const API_URL = 'http://localhost:3000';
+// Use environment variable if available, otherwise default to localhost
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 // State
 let tasks = [];
@@ -175,7 +176,21 @@ async function updateTask(id, taskData) {
 }
 
 async function deleteTask(id) {
-  if (!confirm('Are you sure you want to delete this task?')) {
+  // Use Telegram popup if available, otherwise use native confirm
+  const confirmDelete = async () => {
+    return new Promise((resolve) => {
+      if (tg && tg.showConfirm) {
+        tg.showConfirm('Are you sure you want to delete this task?', (confirmed) => {
+          resolve(confirmed);
+        });
+      } else {
+        resolve(confirm('Are you sure you want to delete this task?'));
+      }
+    });
+  };
+  
+  const confirmed = await confirmDelete();
+  if (!confirmed) {
     return;
   }
   

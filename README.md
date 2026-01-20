@@ -73,6 +73,14 @@ NODE_ENV=development
 WEB_APP_URL=http://localhost:5173
 ```
 
+Optionally, create a `.env` file in `apps/web/` to configure the API URL:
+
+```bash
+cp apps/web/.env.example apps/web/.env
+```
+
+For production deployment, set `VITE_API_URL` to your deployed API URL.
+
 ### 4. Run in Development Mode
 
 ```bash
@@ -138,9 +146,12 @@ vercel
 ```
 
 2. Update your `.env` file with the deployed API URL in the web app's `main.js`:
-```javascript
-const API_URL = 'https://your-api-url.vercel.app';
+```bash
+# In apps/web/.env
+VITE_API_URL=https://your-api-url.vercel.app
 ```
+
+Or set the environment variable in Vercel's dashboard for the web app deployment.
 
 ### Deploy to Netlify
 
