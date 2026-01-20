@@ -10,18 +10,19 @@ interface TaskCardProps {
   onDragEnd?: (e: React.DragEvent) => void;
 }
 
+const PRIORITY_VARIANT = {
+  low: 'info' as const,
+  medium: 'default' as const,
+  high: 'warning' as const,
+  urgent: 'danger' as const,
+};
+
 export const TaskCard: React.FC<TaskCardProps> = ({
   task,
   onClick,
   onDragStart,
   onDragEnd,
 }) => {
-  const priorityVariant = {
-    low: 'info' as const,
-    medium: 'default' as const,
-    high: 'warning' as const,
-    urgent: 'danger' as const,
-  };
 
   return (
     <Card
@@ -45,7 +46,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         )}
 
         <div className="flex items-center justify-between gap-2 flex-wrap">
-          <Badge variant={priorityVariant[task.priority]} size="sm">
+          <Badge variant={PRIORITY_VARIANT[task.priority]} size="sm">
             {task.priority}
           </Badge>
           

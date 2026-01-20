@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Input } from '../common/Input';
 import { Button } from '../common/Button';
 import { Card } from '../common/Card';
+import { TextArea } from '../common/TextArea';
 
 interface AddTaskFormProps {
   columnId: string;
@@ -42,11 +43,11 @@ export const AddTaskForm: React.FC<AddTaskFormProps> = ({
           required
         />
         
-        <textarea
+        <TextArea
           placeholder="Description (optional)"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full px-3 py-2 bg-tg-bg border-2 border-tg-secondary-bg rounded-lg text-tg-text placeholder-tg-hint focus:outline-none focus:border-tg-button transition-colors resize-none"
+          fullWidth
           rows={3}
         />
 
