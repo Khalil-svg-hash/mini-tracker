@@ -14,13 +14,17 @@ app.use(cors());
 app.use(express.json());
 
 // In-memory task storage
+// WARNING: This is for development/demo purposes only.
+// Data will be lost when the server restarts.
+// For production, integrate a database like MongoDB, PostgreSQL, or SQLite.
 let tasks = [];
 let nextId = 1;
 
 // Initialize Telegram Bot (only if token is provided)
-// Note: In production, you should configure webhooks instead of polling
-// for better performance and reliability. See Telegram Bot API docs:
-// https://core.telegram.org/bots/api#setwebhook
+// Note: Bot is initialized with polling disabled for simplicity.
+// The bot commands work through direct API calls when users interact with the bot.
+// For production with webhooks, see: https://core.telegram.org/bots/api#setwebhook
+// For development with polling, set polling: true (requires long-running process)
 let bot = null;
 if (process.env.TELEGRAM_BOT_TOKEN) {
   try {
