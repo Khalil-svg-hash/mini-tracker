@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mini Tracker - Task Management</title>
+  <link rel="stylesheet" href="/src/style.css">
+  
+  <!-- Telegram Web App SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <h1>📋 Mini Tracker</h1>
+      <button id="add-task-btn" class="btn btn-primary">+ New Task</button>
+    </header>
+
+    <!-- Filter Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-filter="all">All</button>
+      <button class="tab" data-filter="todo">To Do</button>
+      <button class="tab" data-filter="in-progress">In Progress</button>
+      <button class="tab" data-filter="done">Done</button>
+    </div>
+
+    <!-- Task List -->
+    <div id="task-container" class="task-container">
+      <div id="loading" class="loading">Loading tasks...</div>
+      <div id="empty-state" class="empty-state" style="display: none;">
+        <p>📝 No tasks yet</p>
+        <p>Click "New Task" to get started!</p>
+      </div>
+      <div id="task-list" class="task-list"></div>
+    </div>
+
+    <!-- Modal for Add/Edit Task -->
+    <div id="task-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modal-title">New Task</h2>
+          <button class="close-btn" id="close-modal">&times;</button>
+        </div>
+        <form id="task-form">
+          <div class="form-group">
+            <label for="task-title">Title *</label>
+            <input type="text" id="task-title" required placeholder="Enter task title">
+          </div>
+          
+          <div class="form-group">
+            <label for="task-description">Description</label>
+            <textarea id="task-description" rows="3" placeholder="Enter task description"></textarea>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="task-status">Status</label>
+              <select id="task-status">
+                <option value="todo">To Do</option>
+                <option value="in-progress">In Progress</option>
+                <option value="done">Done</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="task-priority">Priority</label>
+              <select id="task-priority">
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" id="cancel-btn">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="submit-btn">Save Task</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
