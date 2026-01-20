@@ -1,11 +1,9 @@
 import React from 'react';
 
-interface CardProps {
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   title?: string;
   subtitle?: string;
-  onClick?: () => void;
-  className?: string;
   padding?: 'none' | 'sm' | 'md' | 'lg';
   hover?: boolean;
 }
@@ -18,6 +16,7 @@ export const Card: React.FC<CardProps> = ({
   className = '',
   padding = 'md',
   hover = false,
+  ...props
 }) => {
   const paddingClasses = {
     none: '',
@@ -33,6 +32,7 @@ export const Card: React.FC<CardProps> = ({
     <div
       className={`bg-tg-bg border border-tg-secondary-bg rounded-lg shadow-sm ${paddingClasses[padding]} ${hoverClass} ${clickableClass} ${className}`}
       onClick={onClick}
+      {...props}
     >
       {(title || subtitle) && (
         <div className="mb-4">

@@ -23,7 +23,6 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   onDragStart,
   onDragEnd,
 }) => {
-
   return (
     <Card
       className="mb-3 cursor-move"
