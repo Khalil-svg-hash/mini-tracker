@@ -46,7 +46,7 @@ import { BotModule } from './modules/bot/bot.module';
     RemindersModule,
     CalendarModule,
     ActivityModule,
-    BotModule,
+    BotModule.forRoot(),
   ],
 })
 export class AppModule {}
